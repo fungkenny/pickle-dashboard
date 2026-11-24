@@ -1,0 +1,1438 @@
+<!DOCTYPE html>
+<html lang="zh-HK">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>🏷️ 香港優惠速遞 Dashboard</title>
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      -webkit-tap-highlight-color: transparent;
+    }
+    body {
+      background-color: var(--pickle-surface-page, #f3f5f8);
+      color: var(--pickle-text-primary, #0f172a);
+      font: var(--pickle-type-body, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif);
+      padding: 14px 12px 28px;
+      line-height: 1.45;
+    }
+
+    /* Hero Banner */
+    .hero-card {
+      background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
+      color: #fff;
+      border-radius: var(--pickle-radius-card, 16px);
+      padding: 14px 16px;
+      margin-bottom: 12px;
+      box-shadow: 0 6px 18px rgba(15, 23, 42, 0.14);
+    }
+    .hero-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 8px;
+    }
+    .hero-title {
+      font-size: 1.15rem;
+      font-weight: 800;
+      letter-spacing: -0.01em;
+    }
+    .hero-sub {
+      font-size: 0.72rem;
+      color: #94a3b8;
+      margin-top: 2px;
+    }
+    .live-pill {
+      background: rgba(34, 197, 94, 0.18);
+      color: #86efac;
+      border: 1px solid rgba(134, 239, 172, 0.3);
+      font-size: 0.68rem;
+      font-weight: 700;
+      padding: 3px 8px;
+      border-radius: 999px;
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      white-space: nowrap;
+    }
+    .live-dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: #4ade80;
+    }
+
+    /* Progress inside hero */
+    .hero-progress-wrap {
+      margin-top: 12px;
+    }
+    .hero-progress-labels {
+      display: flex;
+      justify-content: space-between;
+      font-size: 0.72rem;
+      color: #cbd5e1;
+      margin-bottom: 5px;
+    }
+    .progress-track {
+      height: 6px;
+      background: rgba(255, 255, 255, 0.14);
+      border-radius: 999px;
+      overflow: hidden;
+      display: flex;
+    }
+    .progress-used {
+      background: #38bdf8;
+      height: 100%;
+      transition: width 0.25s ease;
+    }
+    .progress-saved {
+      background: #fbbf24;
+      height: 100%;
+      transition: width 0.25s ease;
+    }
+
+    /* KPI Grid */
+    .kpi-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 8px;
+      margin-bottom: 12px;
+    }
+    .kpi-card {
+      background: var(--pickle-surface-card, #fff);
+      border: 1.5px solid var(--pickle-border-hairline, #e2e8f0);
+      border-radius: var(--pickle-radius-tile, 12px);
+      padding: 10px 6px;
+      text-align: center;
+      cursor: pointer;
+      transition: transform 0.12s ease, border-color 0.15s ease, background 0.15s ease;
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.03);
+    }
+    .kpi-card:active { transform: scale(0.96); }
+    .kpi-card.active {
+      border-color: #0f172a;
+      background: #0f172a;
+      color: #fff;
+    }
+    .kpi-card.active .kpi-label { color: #cbd5e1; }
+    .kpi-card.urgent-tile .kpi-num { color: #e11d48; }
+    .kpi-card.active.urgent-tile .kpi-num { color: #fda4af; }
+    .kpi-num {
+      font-size: 1.25rem;
+      font-weight: 800;
+      line-height: 1.1;
+    }
+    .kpi-label {
+      font-size: 0.68rem;
+      color: var(--pickle-text-secondary, #64748b);
+      margin-top: 3px;
+      font-weight: 600;
+    }
+
+    /* Category Distribution Bar */
+    .dist-card {
+      background: var(--pickle-surface-card, #fff);
+      border: 1px solid var(--pickle-border-hairline, #e2e8f0);
+      border-radius: var(--pickle-radius-card, 14px);
+      padding: 10px 12px;
+      margin-bottom: 12px;
+    }
+    .dist-head {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 0.76rem;
+      font-weight: 700;
+      color: var(--pickle-text-secondary, #475569);
+      margin-bottom: 8px;
+    }
+    .dist-bar {
+      height: 8px;
+      border-radius: 999px;
+      overflow: hidden;
+      display: flex;
+      gap: 2px;
+      margin-bottom: 8px;
+    }
+    .dist-seg {
+      height: 100%;
+      cursor: pointer;
+      transition: opacity 0.15s ease;
+    }
+    .dist-seg:hover { opacity: 0.85; }
+
+    /* Urgent Spotlight */
+    .spotlight-box {
+      background: linear-gradient(135deg, #fff1f2 0%, #fff7ed 100%);
+      border: 1px solid #fecdd3;
+      border-radius: var(--pickle-radius-card, 14px);
+      padding: 10px 12px;
+      margin-bottom: 12px;
+    }
+    .spotlight-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 7px;
+    }
+    .spotlight-title {
+      font-size: 0.8rem;
+      font-weight: 800;
+      color: #9f1239;
+    }
+    .spotlight-sub {
+      font-size: 0.68rem;
+      color: #be123c;
+      font-weight: 600;
+    }
+    .spotlight-items {
+      display: flex;
+      gap: 8px;
+      overflow-x: auto;
+      padding-bottom: 2px;
+      scrollbar-width: none;
+    }
+    .spotlight-items::-webkit-scrollbar { display: none; }
+    .spot-chip {
+      background: #fff;
+      border: 1px solid #fda4af;
+      border-radius: 10px;
+      padding: 7px 10px;
+      min-width: 175px;
+      max-width: 215px;
+      flex-shrink: 0;
+      cursor: pointer;
+      box-shadow: 0 1px 2px rgba(190, 18, 60, 0.06);
+    }
+    .spot-merchant { font-size: 0.68rem; font-weight: 700; color: #be123c; }
+    .spot-name {
+      font-size: 0.76rem;
+      font-weight: 700;
+      color: #0f172a;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      margin: 2px 0;
+    }
+    .spot-exp { font-size: 0.68rem; color: #64748b; }
+
+    /* Controls Panel */
+    .controls-panel {
+      background: var(--pickle-surface-card, #fff);
+      border: 1px solid var(--pickle-border-hairline, #e2e8f0);
+      border-radius: var(--pickle-radius-card, 14px);
+      padding: 10px;
+      margin-bottom: 12px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+    .search-row {
+      display: flex;
+      gap: 6px;
+      align-items: center;
+    }
+    .search-wrap {
+      position: relative;
+      flex: 1;
+      display: flex;
+      align-items: center;
+    }
+    .search-input {
+      width: 100%;
+      border: 1px solid var(--pickle-border-control, #cbd5e1);
+      border-radius: 9px;
+      padding: 7px 28px 7px 10px;
+      font-size: 0.82rem;
+      background: var(--pickle-surface-fill-faint, #f8fafc);
+      color: var(--pickle-text-primary, #0f172a);
+      outline: none;
+    }
+    .search-input:focus { border-color: #0f172a; background: #fff; }
+    .clear-search {
+      position: absolute;
+      right: 8px;
+      background: none;
+      border: none;
+      font-size: 0.85rem;
+      color: #94a3b8;
+      cursor: pointer;
+      display: none;
+    }
+    .clear-search.visible { display: block; }
+    .sort-select {
+      border: 1px solid var(--pickle-border-control, #cbd5e1);
+      border-radius: 9px;
+      padding: 7px 8px;
+      font-size: 0.76rem;
+      background: var(--pickle-surface-fill-faint, #f8fafc);
+      color: var(--pickle-text-primary, #0f172a);
+      font-weight: 600;
+    }
+
+    .cat-nav {
+      display: flex;
+      gap: 6px;
+      overflow-x: auto;
+      scrollbar-width: none;
+    }
+    .cat-nav::-webkit-scrollbar { display: none; }
+    .cat-btn {
+      background: var(--pickle-surface-fill-faint, #f8fafc);
+      border: 1px solid var(--pickle-border-hairline, #e2e8f0);
+      border-radius: 8px;
+      padding: 5px 9px;
+      font-size: 0.75rem;
+      color: var(--pickle-text-secondary, #475569);
+      cursor: pointer;
+      white-space: nowrap;
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      font-weight: 600;
+    }
+    .cat-btn.active {
+      background: #0f172a;
+      color: #fff;
+      border-color: #0f172a;
+    }
+    .cat-dot {
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      display: inline-block;
+    }
+
+    /* Section Header */
+    .section-bar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 8px;
+      padding: 0 2px;
+    }
+    .section-title {
+      font-size: 0.8rem;
+      font-weight: 700;
+      color: var(--pickle-text-secondary, #475569);
+    }
+
+    /* Deal Cards */
+    .deal-list {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 10px;
+    }
+    @media (min-width: 600px) {
+      .deal-list { grid-template-columns: repeat(2, 1fr); }
+    }
+    .deal-card {
+      background: var(--pickle-surface-card, #fff);
+      border: 1px solid var(--pickle-border-hairline, #e2e8f0);
+      border-left: 4px solid #cbd5e1;
+      border-radius: var(--pickle-radius-card, 14px);
+      padding: 12px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      gap: 8px;
+      box-shadow: 0 2px 6px rgba(15, 23, 42, 0.04);
+      transition: transform 0.12s ease, opacity 0.15s ease;
+    }
+    .deal-card.cat-food { border-left-color: #f97316; }
+    .deal-card.cat-dining { border-left-color: #ec4899; }
+    .deal-card.cat-travel { border-left-color: #3b82f6; }
+    .deal-card.cat-shopping { border-left-color: #8b5cf6; }
+    .deal-card.cat-cards { border-left-color: #10b981; }
+    .deal-card.is-used { opacity: 0.55; }
+
+    .card-header {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 8px;
+    }
+    .merchant-row {
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      flex-wrap: wrap;
+      margin-bottom: 2px;
+    }
+    .cat-pill {
+      font-size: 0.66rem;
+      font-weight: 700;
+      padding: 1px 6px;
+      border-radius: 4px;
+      background: #f1f5f9;
+      color: #334155;
+    }
+    .merchant-tag {
+      font-size: 0.72rem;
+      font-weight: 700;
+      color: var(--pickle-text-secondary, #64748b);
+    }
+    .deal-title {
+      font-size: 0.94rem;
+      font-weight: 700;
+      color: var(--pickle-text-primary, #0f172a);
+      line-height: 1.35;
+    }
+    .expiry-badge {
+      font-size: 0.68rem;
+      font-weight: 700;
+      padding: 3px 7px;
+      border-radius: 999px;
+      white-space: nowrap;
+      flex-shrink: 0;
+    }
+    .expiry-urgent { background: #fee2e2; color: #b91c1c; }
+    .expiry-normal { background: #dcfce7; color: #15803d; }
+
+    .deal-desc {
+      font-size: 0.82rem;
+      color: var(--pickle-text-primary, #334155);
+      margin-top: 4px;
+    }
+    .meta-chip {
+      display: inline-block;
+      font-size: 0.71rem;
+      background: var(--pickle-surface-fill-faint, #f1f5f9);
+      color: var(--pickle-text-secondary, #475569);
+      padding: 3px 8px;
+      border-radius: 6px;
+      margin-top: 6px;
+    }
+
+    .promo-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      background: #f8fafc;
+      border: 1px dashed #cbd5e1;
+      border-radius: 9px;
+      padding: 6px 10px;
+      margin-top: 6px;
+      gap: 8px;
+    }
+    .promo-code {
+      font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+      font-size: 0.84rem;
+      font-weight: 800;
+      color: #0f172a;
+      letter-spacing: 0.03em;
+    }
+    .copy-btn {
+      background: #0f172a;
+      color: #fff;
+      border: none;
+      border-radius: 6px;
+      padding: 4px 10px;
+      font-size: 0.72rem;
+      font-weight: 700;
+      cursor: pointer;
+    }
+    .copy-btn.copied { background: #16a34a; }
+
+    .card-footer {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding-top: 7px;
+      border-top: 1px solid var(--pickle-border-hairline, #f1f5f9);
+      gap: 8px;
+    }
+    .action-group { display: flex; gap: 6px; }
+    .action-btn {
+      background: var(--pickle-surface-card, #fff);
+      border: 1px solid var(--pickle-border-control, #cbd5e1);
+      border-radius: 7px;
+      padding: 4px 9px;
+      font-size: 0.72rem;
+      color: var(--pickle-text-secondary, #475569);
+      cursor: pointer;
+      font-weight: 600;
+    }
+    .action-btn.saved {
+      background: #fef3c7;
+      border-color: #f59e0b;
+      color: #b45309;
+    }
+    .action-btn.used {
+      background: #e0f2fe;
+      border-color: #38bdf8;
+      color: #0369a1;
+    }
+    .link-btn {
+      font-size: 0.75rem;
+      font-weight: 700;
+      color: #2563eb;
+      text-decoration: none;
+      white-space: nowrap;
+    }
+
+    /* Toast */
+    .toast {
+      position: fixed;
+      bottom: 18px;
+      left: 50%;
+      transform: translateX(-50%) translateY(20px);
+      background: #0f172a;
+      color: #fff;
+      font-size: 0.78rem;
+      font-weight: 600;
+      padding: 8px 14px;
+      border-radius: 999px;
+      box-shadow: 0 6px 16px rgba(0,0,0,0.2);
+      opacity: 0;
+      pointer-events: none;
+      transition: all 0.2s ease;
+      z-index: 99;
+    }
+    .toast.show {
+      opacity: 1;
+      transform: translateX(-50%) translateY(0);
+    }
+  </style>
+</head>
+<body>
+  <section class="hero-card">
+    <div class="hero-top">
+      <div>
+        <div class="hero-title">🏷️ 香港優惠速遞 Dashboard</div>
+        <div class="hero-sub">最後掃描：2026-11-24（HKT）｜每日 09:30 更新</div>
+      </div>
+      <div class="live-pill"><span class="live-dot"></span>自動監察中</div>
+    </div>
+    <div class="hero-progress-wrap">
+      <div class="hero-progress-labels">
+        <span id="progress-text">已使用 0 ・ 已收藏 0 / 19</span>
+        <span id="progress-pct">0%</span>
+      </div>
+      <div class="progress-track">
+        <div class="progress-used" id="bar-used" style="width:0%"></div>
+        <div class="progress-saved" id="bar-saved" style="width:0%"></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="kpi-grid" id="kpi-grid">
+    <div class="kpi-card active" data-filter-status="all">
+      <div class="kpi-num" id="cnt-all">0</div>
+      <div class="kpi-label">全部優惠</div>
+    </div>
+    <div class="kpi-card urgent-tile" data-filter-status="urgent">
+      <div class="kpi-num" id="cnt-urgent">0</div>
+      <div class="kpi-label">🔥 快到期</div>
+    </div>
+    <div class="kpi-card" data-filter-status="saved">
+      <div class="kpi-num" id="cnt-saved">0</div>
+      <div class="kpi-label">📌 已收藏</div>
+    </div>
+    <div class="kpi-card" data-filter-status="used">
+      <div class="kpi-num" id="cnt-used">0</div>
+      <div class="kpi-label">✓ 已使用</div>
+    </div>
+  </section>
+
+  <section class="dist-card">
+    <div class="dist-head">
+      <span>分類分佈（點擊色條快速篩選）</span>
+      <span id="code-count-label"></span>
+    </div>
+    <div class="dist-bar" id="dist-bar"></div>
+    <nav class="cat-nav" id="cat-nav">
+      <button class="cat-btn active" data-cat="all">全部 <span id="cat-cnt-all"></span></button>
+      <button class="cat-btn" data-cat="food"><span class="cat-dot" style="background:#f97316"></span>外賣 <span id="cat-cnt-food"></span></button>
+      <button class="cat-btn" data-cat="dining"><span class="cat-dot" style="background:#ec4899"></span>堂食 <span id="cat-cnt-dining"></span></button>
+      <button class="cat-btn" data-cat="travel"><span class="cat-dot" style="background:#3b82f6"></span>旅遊 <span id="cat-cnt-travel"></span></button>
+      <button class="cat-btn" data-cat="shopping"><span class="cat-dot" style="background:#8b5cf6"></span>百貨 <span id="cat-cnt-shopping"></span></button>
+      <button class="cat-btn" data-cat="cards"><span class="cat-dot" style="background:#10b981"></span>信用卡 <span id="cat-cnt-cards"></span></button>
+    </nav>
+  </section>
+
+  <section class="spotlight-box" id="spotlight-box">
+    <div class="spotlight-head">
+      <div class="spotlight-title">⚡ 最後衝刺／焦點到期</div>
+      <div class="spotlight-sub">點擊即時篩選</div>
+    </div>
+    <div class="spotlight-items" id="spotlight-items"></div>
+  </section>
+
+  <section class="controls-panel">
+    <div class="search-row">
+      <div class="search-wrap">
+        <input type="text" id="search-input" class="search-input" placeholder="🔍 搜尋商戶、銀行、優惠碼...">
+        <button id="clear-search" class="clear-search" aria-label="清除搜尋">✕</button>
+      </div>
+      <select id="sort-select" class="sort-select" aria-label="排序">
+        <option value="default">預設排序</option>
+        <option value="urgent">最快到期</option>
+        <option value="code">有優惠碼優先</option>
+      </select>
+    </div>
+  </section>
+
+  <div class="section-bar">
+    <div class="section-title" id="section-title">顯示全部優惠</div>
+  </div>
+
+  <div class="deal-list" id="deal-list"></div>
+  <div class="toast" id="toast"></div>
+
+  <script>
+    const CAT_META = {
+      food: { label: "🛵 外賣", color: "#f97316" },
+      dining: { label: "🍽️ 堂食", color: "#ec4899" },
+      travel: { label: "✈️ 旅遊", color: "#3b82f6" },
+      shopping: { label: "🛒 百貨", color: "#8b5cf6" },
+      cards: { label: "💳 信用卡", color: "#10b981" }
+    };
+
+    const DEFAULT_DEALS = [
+      {
+        id: "tripcom-bf-hokkaido",
+        cat: "travel",
+        merchant: "Trip.com Black Friday / 北海道專場",
+        title: "札幌／北海道精選酒店高達 4 折起（60% OFF）",
+        desc: "Trip.com Black Friday（11/16–11/30）及北海道優惠（至 11/29），札幌薄野／大通公園一帶酒店限時低至 4 折。",
+        code: "",
+        condition: "Black Friday 至 11/30；北海道專場至 11/29",
+        expires: "11/29 止",
+        urgent: false,
+        url: "https://hk.trip.com/",
+        userState: "active"
+      },
+      {
+        id: "cathay-sapporo-2pax",
+        cat: "travel",
+        merchant: "國泰航空（Trip.com / 永安）",
+        title: "直飛札幌二人同行來回連稅每人 $4,305 起（包 23kg 行李）",
+        desc: "出發至 2027/04/30（2–7 日票），Trip.com $4,305 起；永安 $4,366 起可用中銀 BOC120T1 滿 $1,500 減 $120。",
+        code: "BOC120T1",
+        condition: "須 2 人或以上同行（11/30 止）",
+        expires: "11/30 止",
+        urgent: false,
+        url: "https://hk.trip.com/",
+        userState: "active"
+      },
+      {
+        id: "tripcom-visa",
+        cat: "travel",
+        merchant: "Trip.com × Visa Signature / Platinum",
+        title: "App 訂機票及酒店各享 8 折（各減高達 HK$400）",
+        desc: "11/16 起憑香港發行 Visa Signature 或 Platinum 卡於指定頁領券，App 預訂機票／酒店各享 8 折！",
+        code: "",
+        condition: "限 Trip.com App，先到先得",
+        expires: "12/31 止",
+        urgent: false,
+        url: "https://visaselectrewardhk.com/offer/offer_1788178460_6a95701cb5e7a",
+        userState: "active"
+      },
+      {
+        id: "samgor-lunch-49",
+        cat: "dining",
+        merchant: "譚仔三哥",
+        title: "$49 快閃午市套餐：番茄湯牛面肉金錢肚米線配凍檸茶",
+        desc: "每日 10:30–14:30 供應，$49 包主食及飲品，另可 +$6 加配青瓜/雲耳或 +$14 雞軟骨/腩肉串。",
+        code: "",
+        condition: "10:30–14:30（大學及機場店除外）",
+        expires: "限時午市",
+        urgent: false,
+        url: "https://www.tjsamgor.com/",
+        userState: "active"
+      },
+      {
+        id: "kfc-nov-deal",
+        cat: "dining",
+        merchant: "KFC 肯德基",
+        title: "「肯！抵 Deal」早餐醬燒雞扒包買一送一",
+        desc: "11/16–11/30 每日 11:00 前早餐時段，醬燒雞扒包買一送一（兩個人食平均半價）。",
+        code: "",
+        condition: "11:00 前早餐時段適用",
+        expires: "11/30 止",
+        urgent: false,
+        url: "https://www.kfchk.com/",
+        userState: "active"
+      },
+      {
+        id: "fairwood-claypot",
+        cat: "dining",
+        merchant: "大快活 Fairwood",
+        title: "App 會員煲仔飯最高減 $6｜$8 原煲帶走還煲送 $8 券",
+        desc: "全新臘腸鮮沙薑三黃雞煲仔飯：會員午市配飲品減 $5、晚市配燉湯及灼菜減 $6；加 $8 原煲外賣還煲送 $8 現金券。",
+        code: "",
+        condition: "須用大快活 App 會員優惠券",
+        expires: "推廣期內",
+        urgent: false,
+        url: "https://www.fairwood.com.hk/",
+        userState: "active"
+      },
+      {
+        id: "mcd-nov-deal",
+        cat: "dining",
+        merchant: "麥當勞 McDonald's",
+        title: "今日（11/23–29）第 47 週開鑼：星期一領逾 $200 券｜$49 晚市套餐｜平日下午茶 $20 起",
+        desc: "Pokémon 四道菜套餐減 $3、18:00 後 $49 滋味分享盒／Double 芝士孖堡套餐、$88 16件脆香雞翼；平日 14:00–18:00 推 $20 魚柳飽／$22 脆香雞翼／$25 麥炸雞配 OREO 麥旋風。",
+        code: "",
+        condition: "麥當勞 App 優惠券（下午茶限平日 14:00–18:00）",
+        expires: "11/29 止",
+        urgent: false,
+        url: "https://www.mcdonalds.com.hk/",
+        userState: "active"
+      },
+      {
+        id: "foodpanda-tamjai-59",
+        cat: "food",
+        merchant: "foodpanda × 譚仔「1 人餐」",
+        title: "過小橋米線一人套餐免運費激筍價 $59",
+        desc: "foodpanda「1 人餐」專區限定：過小橋米線＋土匪雞翼雞鎚雙併＋冰涼低糖綠茶，連免運費只需 $59。",
+        code: "",
+        condition: "限 foodpanda 1 人餐專區",
+        expires: "售完即止",
+        urgent: false,
+        url: "https://www.foodpanda.hk/",
+        userState: "active"
+      },
+      {
+        id: "foodpanda-sushiro",
+        cat: "food",
+        merchant: "foodpanda × 壽司郎",
+        title: "外送滿 $200 享 55 折（減 $100）｜自取滿 $100 享 7 折",
+        desc: "全線壽司郎適用！外送滿 $200 輸 PANDADEAL 最多減 $100；外賣自取滿 $100 最多減 $30。",
+        code: "PANDADEAL",
+        condition: "數量有限，先到先得",
+        expires: "11/30 止",
+        urgent: false,
+        url: "https://www.foodpanda.hk/",
+        userState: "active"
+      },
+      {
+        id: "keeta-bocpay",
+        cat: "food",
+        merchant: "KeeTa × BoC Pay+",
+        title: "滿 HK$160 即減 HK$15（11/20 再派券）",
+        desc: "結帳前輸入 BOCPAYKT 並以 BoC Pay+ 付款滿 HK$160 減 HK$15；11/20 會員將再獲額外券。",
+        code: "BOCPAYKT",
+        condition: "限送遞訂單及 BoC Pay+ 付款",
+        expires: "11/30 止",
+        urgent: false,
+        url: "https://www.bochk.com/",
+        userState: "active"
+      },
+      {
+        id: "keeta-alipay",
+        cat: "food",
+        merchant: "KeeTa × AlipayHK",
+        title: "訂外賣即減 HK$10",
+        desc: "使用 AlipayHK 付款並輸入優惠碼即可扣減，日常叫外賣啱用。",
+        code: "ALIPAYHK10",
+        condition: "限 AlipayHK 付款",
+        expires: "12/31 止",
+        urgent: false,
+        url: "https://www.alipayhk.com/",
+        userState: "active"
+      },
+      {
+        id: "keeta-citi",
+        cat: "food",
+        merchant: "KeeTa × Citibank",
+        title: "現有客戶滿 HK$200 減 HK$25（新客 6 折）",
+        desc: "綁定 Citi 信用卡或扣賬卡於 KeeTa 結帳適用。",
+        code: "KEETACITI",
+        condition: "每曆月限享 1 次",
+        expires: "12/31 止",
+        urgent: false,
+        url: "https://www.citibank.com.hk/",
+        userState: "active"
+      },
+      {
+        id: "keeta-solo",
+        cat: "food",
+        merchant: "KeeTa 一人飯堂",
+        title: "指定餐廳不設最低消費減 HK$15",
+        desc: "於一人飯堂專區指定餐廳點餐即減 HK$15，無最低消費門檻。",
+        code: "",
+        condition: "限指定餐廳",
+        expires: "12/31 止",
+        urgent: false,
+        url: "https://www.mykeeta.com/",
+        userState: "active"
+      },
+      {
+        id: "foodpanda-dbs",
+        cat: "food",
+        merchant: "foodpanda × DBS / WeWa",
+        title: "DBS 卡減 HK$50｜WeWa／EarnMORE 減 HK$40",
+        desc: "DBS 滿 HK$180 輸入 DBS50 減 $50；WeWa/EarnMORE 輸入 PCL40 減 $40。另 Visa 滿 $180 自動減 $10。",
+        code: "DBS50",
+        condition: "指定信用卡適用，名額有限",
+        expires: "12/31 止",
+        urgent: false,
+        url: "https://www.foodpanda.hk/",
+        userState: "active"
+      },
+      {
+        id: "foodpanda-pickup",
+        cat: "food",
+        merchant: "foodpanda 外賣自取",
+        title: "精選餐廳滿 HK$150 減 HK$20｜Alipay 滿 $80 減 $10",
+        desc: "輸入 GOPU20 滿 $150 減 $20，或用 Alipay 輸入 ALIPAYPU10 滿 $80 減 $10。",
+        code: "GOPU20",
+        condition: "限外賣自取訂單",
+        expires: "換完即止",
+        urgent: false,
+        url: "https://www.foodpanda.hk/",
+        userState: "active"
+      },
+      {
+        id: "keeta-unionpay-weekday",
+        cat: "food",
+        merchant: "KeeTa × 銀聯 / BoC Pay+ / Apple Pay",
+        title: "逢週一至五單筆滿 HK$180 即減 HK$15（今日 11/24 適用）",
+        desc: "10/26–11/30 逢星期一至五以銀聯（含 Apple Pay 綁定銀聯卡、BoC Pay+）支付 KeeTa 外送或自取滿 $180 即減 $15；全期最多享 4 次。",
+        code: "",
+        condition: "逢週一至五適用，每日限享 1 次",
+        expires: "11/30 止",
+        urgent: false,
+        url: "https://www.keeta.com/",
+        userState: "active"
+      },
+      {
+        id: "wellcome-fp-nov26",
+        cat: "food",
+        merchant: "惠康 × foodpanda",
+        title: "本週（11/20–26）買滿 $350 輸入 WELL10 享 9 折（最高減 $50）＋免運費",
+        desc: "惠康 foodpanda 訂單滿 $350 輸入 WELL10 全單 9 折（減高達 $50）兼免運費＋賺 3x yuu 分；日本北海道帶子 $69/包。",
+        code: "WELL10",
+        condition: "滿 $350 適用，名額有限",
+        expires: "11/26 止",
+        urgent: false,
+        url: "https://www.foodpanda.hk/",
+        userState: "active"
+      },
+      {
+        id: "keeta-doughbros-bogo",
+        cat: "food",
+        merchant: "Dough Bros × Keeta",
+        title: "聖誕版優惠：任選 6 款經典薄餅買一送一",
+        desc: "經 Keeta 落單任選經典芝士、夏威夷、燒烤醬雞肉、意大利辣肉腸等 6 款經典口味薄餅，買一個第二個免費送。",
+        code: "",
+        condition: "限指定 6 款經典薄餅",
+        expires: "11/29 止",
+        urgent: false,
+        url: "https://www.mykeeta.com/",
+        userState: "active"
+      },
+      {
+        id: "foodpanda-sugidama",
+        cat: "food",
+        merchant: "foodpanda × 杉玉 Sugidama",
+        title: "全線外賣自取滿 HK$80 即享 6 折（最高減 HK$100）",
+        desc: "香港杉玉全線分店外賣自取滿 $80 即享 6 折，湊滿約 $166 即可拎盡 $100 折扣，只限自取。",
+        code: "",
+        condition: "只限外賣自取，名額有限",
+        expires: "11/30 止",
+        urgent: false,
+        url: "https://www.foodpanda.hk/",
+        userState: "active"
+      },
+      {
+        id: "hangseng-tastegourmet",
+        cat: "dining",
+        merchant: "恒生信用卡 × 嚐高美集團",
+        title: "旗下食肆高達 HK$80 即時折扣／套餐低至 6 折",
+        desc: "於嚐高美集團旗下餐廳（如牛氣、那霸沖繩料理、燒肉火藏等）用恒生卡享高達 HK$80 折扣。",
+        code: "",
+        condition: "視乎指定餐廳及套餐",
+        expires: "2027/04/30 止",
+        urgent: false,
+        url: "https://www.hangseng.com/",
+        userState: "active"
+      },
+      {
+        id: "k11-dining",
+        cat: "dining",
+        merchant: "K11 Art Mall / MUSEA",
+        title: "KLUB 11 會員免費領總值 HK$1,200 餐飲禮券",
+        desc: "含 6 張滿 $400 減 $100 券及 3 張 MUSEA 滿 $800 減 $200 券，適用逾 30 間餐廳。",
+        code: "",
+        condition: "須於 K11 HK App 領取並綁定 K Dollar",
+        expires: "11/30 止",
+        urgent: false,
+        url: "https://www.k11.com/",
+        userState: "active"
+      },
+      {
+        id: "hsbc-maxims",
+        cat: "dining",
+        merchant: "滙豐信用卡 × 美心中菜",
+        title: "指定晚市套餐低至 6 折｜自取散點 8 折",
+        desc: "適用美心皇宮、翠園、北京樓、潮江春等逾 40 間分店 4/6/12 人套餐。",
+        code: "",
+        condition: "茶芥及原價加一另計",
+        expires: "11/30 止",
+        urgent: false,
+        url: "https://www.hsbc.com.hk/",
+        userState: "active"
+      },
+      {
+        id: "pizzahut-deal",
+        cat: "dining",
+        merchant: "Pizza Hut",
+        title: "週末外送滿 HK$300 減 HK$60",
+        desc: "週末／公眾假期外送輸入 PIZZA 減 $60；堂食 17:30 前滿 $200 減 $40。",
+        code: "PIZZA",
+        condition: "第三方外賣平台除外",
+        expires: "12/18 止",
+        urgent: false,
+        url: "https://www.pizzahut.com.hk/",
+        userState: "active"
+      },
+      {
+        id: "maxims-mx",
+        cat: "dining",
+        merchant: "美心 MX",
+        title: "70 周年最後一週（11/23–29）77 折：$38 漢堡扒／$43 焗豬｜11/26 止燒腩仔 $68",
+        desc: "11/23–29 午晚市漢堡扒飯 $38、焗豬扒飯 $43、晚市花膠雞水餃鍋 $49；11/23–26 15:30 起外賣燒腩仔半斤 $68、加半隻沙薑雞 $98（6折）；另《起筷》$8 券至 11/30。",
+        code: "",
+        condition: "只限堂食及外賣自取（指定分店除外）",
+        expires: "11/29 止",
+        urgent: false,
+        url: "https://www.maximsmx.com.hk/",
+        userState: "active"
+      },
+      {
+        id: "cdc-tuesday-nov24",
+        cat: "dining",
+        merchant: "大家樂 Café de Coral",
+        title: "今日週二（11/24）Club 100 $99「芝」味孖寶｜App 點餐滿 $50 減 $10",
+        desc: "11/24 限定 Club 100 開心星期二 $99「芝」味孖寶；另有 App 搶手機點餐滿 $50 減 $10，及平日午市飽肚 4 揀 1 $39 起。",
+        code: "",
+        condition: "須用大家樂 Club 100 App",
+        expires: "今日 11/24（孖寶）",
+        urgent: true,
+        url: "https://www.cafedecoral.com/",
+        userState: "active"
+      },
+      {
+        id: "cathay-hsbc-800",
+        cat: "travel",
+        merchant: "國泰航空 × 滙豐信用卡",
+        title: "官網單筆滿 HK$10,000 即減 HK$800（每月首 950 名額）",
+        desc: "於國泰官網訂票（全線航點／艙等適用，2027/12/26 前出發）輸入 HSBC800 並以滙豐信用卡付款即減 $800；每月 1 號放新名額。",
+        code: "HSBC800",
+        condition: "須單筆滿 HK$10,000，不設 24 小時免費取消",
+        expires: "12/31 止",
+        urgent: false,
+        url: "https://www.cathaypacific.com/",
+        userState: "active"
+      },
+      {
+        id: "tripcom-hangseng",
+        cat: "travel",
+        merchant: "Trip.com × 恒生 Visa 卡",
+        title: "機票／酒店滿 $2,000 減 $180（套票減 $200）",
+        desc: "機票輸 HASEFLIGHT180W、酒店輸 HASEHOTEL180W、套票輸 HASEBUNDLE200W；每週三 00:00 更新名額。",
+        code: "HASEFLIGHT180W",
+        condition: "限恒生 Visa 信用卡，不可疊加 Trip Coins",
+        expires: "2027/01/05 止",
+        urgent: false,
+        url: "https://www.hangseng.com/cms/emkt/pmo/grp04/p81/chi/index.html",
+        userState: "active"
+      },
+      {
+        id: "tripcom-za",
+        cat: "travel",
+        merchant: "Trip.com × ZA Card",
+        title: "預訂酒店／機票高達 10% 折扣",
+        desc: "經指定連結於 Trip.com、Expedia、Hotels.com 預訂並輸入優惠碼享高達 9 折。",
+        code: "",
+        condition: "須經 ZA 指定連結預訂",
+        expires: "12/31 止",
+        urgent: false,
+        url: "https://bank.za.group/",
+        userState: "active"
+      },
+      {
+        id: "hx-tuesday",
+        cat: "travel",
+        merchant: "香港航空",
+        title: "今日週二（11/24）適用！指定艙位 85 折",
+        desc: "逢星期二於官網預訂由香港出發指定子艙位（I / T / V / W）輸入代碼享 85 折，札幌航線適用。",
+        code: "85TUE",
+        condition: "逢星期二適用（今日 11/24）",
+        expires: "今日 11/24 適用",
+        urgent: true,
+        url: "https://www.hongkongairlines.com/",
+        userState: "active"
+      },
+      {
+        id: "octopus-travel",
+        cat: "travel",
+        merchant: "八達通 App 旅遊支付",
+        title: "外遊 QR 支付滿 HK$200 回贈 HK$20（最多 $100）",
+        desc: "支援日本 PayPay、韓國 ZeroPay、內地微信／銀聯。須交易前網上登記！",
+        code: "TRAVELWINT",
+        condition: "須升級 Plus/Pro 銀包及預先登記",
+        expires: "2027/02/28 止",
+        urgent: false,
+        url: "https://www.octopus.com.hk/",
+        userState: "active"
+      },
+      {
+        id: "yata-autumn-sale",
+        cat: "shopping",
+        merchant: "一田 YATA（沙田新城市特展）",
+        title: "日本秋祭 SALE（11/16–11/30）｜滿 $60 儲電子印花換 Staub/ZWILLING",
+        desc: "全線一田及沙田新城市廣場一期 L1 羅馬圓型獻技場設特別展場；YATA-Fans 單筆每滿 $60 獲 1 個印花換購廚具。",
+        code: "",
+        condition: "便利一田 YATA go! 及 eShop 不獲印花",
+        expires: "11/30 止",
+        urgent: false,
+        url: "https://www.yata.hk/",
+        userState: "active"
+      },
+      {
+        id: "wellcome-weekly-nov26",
+        cat: "shopping",
+        merchant: "惠康超級市場",
+        title: "本週（至 11/26）道地 4 排 $60 送 $52 禮品｜銀魚 $22｜雪糕 5 件 8 折",
+        desc: "11/20–26 銀魚 $22/包（49 折）、十字奶 $19/3 盒、道地 6 包裝 4 排 $60 送 $52 禮品、單件裝雪糕 5 件以上 8 折。",
+        code: "",
+        condition: "門市適用，貨品視乎分店供應",
+        expires: "11/26 止",
+        urgent: false,
+        url: "https://www.wellcome.com.hk/",
+        userState: "active"
+      },
+      {
+        id: "aeon-thanks-day",
+        cat: "shopping",
+        merchant: "AEON × Daiso Black Friday",
+        title: "Black Friday（至 12/6）精選貨品 5 折｜Daiso 吸濕／收納 $10（至 11/30）",
+        desc: "AEON Black Friday 至 12/6 精選貨品半價；Living Plaza / Daiso 至 11/30 精選吸濕及衣服收納袋 $10、杯裝啫喱 3 件 $12。",
+        code: "",
+        condition: "部分貨品指定分店除外，售完即止",
+        expires: "12/06 止",
+        urgent: false,
+        url: "https://www.aeonstores.com.hk/",
+        userState: "active"
+      },
+      {
+        id: "hangseng-enjoy-23",
+        cat: "shopping",
+        merchant: "惠康 / Market Place × 恒生 enJoy 卡",
+        title: "每月 3、13、23 號（下次 12/3）單一簽賬滿 $100 享 92 折",
+        desc: "每月 3、13、23 號於惠康、Market Place、3hreesixty 等指定商戶單一簽賬滿 $100 享 92 折，平日享 3x yuu 積分。",
+        code: "",
+        condition: "須以已綁定 yuu 之恒生 enJoy 卡付款",
+        expires: "每月 3/13/23 號",
+        urgent: false,
+        url: "https://www.wellcome.com.hk/",
+        userState: "active"
+      },
+      {
+        id: "wellcome-hangseng",
+        cat: "shopping",
+        merchant: "惠康 / Market Place × 恒生卡",
+        title: "網購滿 $1,000 賺 $100｜門市逢五至日滿 $500 賺 $40",
+        desc: "經 +FUN Centre 登記後，於惠康／Market Place／yuu 網購或週末門市簽賬賺高達 $620 +FUN Dollars。",
+        code: "",
+        condition: "須於恒生 App 預先登記，電子錢包除外",
+        expires: "12/31 止",
+        urgent: false,
+        url: "https://www.hangseng.com/cms/emkt/pmo/grp05/p86/chi/index.html",
+        userState: "active"
+      },
+      {
+        id: "smart-supermarket",
+        cat: "shopping",
+        merchant: "百佳 / HKTVmall × 渣打 Smart 卡",
+        title: "指定超市及網購全年 5% 現金回贈",
+        desc: "百佳、TASTE、FUSION、GREAT 及 HKTVmall 無最低消費門檻穩享 5% 現金回贈（每年上限 $3,000）。",
+        code: "",
+        condition: "每年簽賬上限 HK$60,000",
+        expires: "長期優惠",
+        urgent: false,
+        url: "https://www.sc.com/hk/",
+        userState: "active"
+      },
+      {
+        id: "ocbc-rebate",
+        cat: "cards",
+        merchant: "OCBC 信用卡",
+        title: "Foodpanda／Keeta／Klook／KKday 高達 6% 回贈",
+        desc: "月簽零售滿 HK$5,000，指定網購外賣平台新卡 6%、現有卡 5% 現金回贈（月上限 $500）。",
+        code: "",
+        condition: "每月簽賬門檻 HK$5,000",
+        expires: "12/31 止",
+        urgent: false,
+        url: "https://www.ocbc.com.hk/personal-banking/campaign/sem-promotion",
+        userState: "active"
+      },
+      {
+        id: "boc-chill",
+        cat: "cards",
+        merchant: "中銀 BOC Chill Card",
+        title: "KeeTa 及指定商戶高達 10% 現金回贈",
+        desc: "當月實體零售簽賬滿 HK$1,500 後，綁定 KeeTa 簽賬享 10% 回贈（月上限 $150）。",
+        code: "",
+        condition: "須月簽實體滿 HK$1,500",
+        expires: "長期優惠",
+        urgent: false,
+        url: "https://www.bochk.com/",
+        userState: "active"
+      },
+      {
+        id: "hsbc-red",
+        cat: "cards",
+        merchant: "滙豐 Red 信用卡",
+        title: "網上簽賬 4% 獎賞錢回贈（免 CBF）",
+        desc: "網購、外賣 App（KeeTa / foodpanda）及港幣海外平台（Trip.com 等）4% 回贈，免跨境港幣手續費。",
+        code: "",
+        condition: "每月首 HK$10,000 網簽",
+        expires: "長期優惠",
+        urgent: false,
+        url: "https://www.hsbc.com.hk/",
+        userState: "active"
+      }
+    ];
+
+    let state = {
+      activeCat: "all",
+      activeStatus: "all",
+      sortBy: "default",
+      searchQuery: "",
+      userMarks: {}
+    };
+
+    function getDeals() {
+      return DEFAULT_DEALS.map(d => ({
+        ...d,
+        userState: state.userMarks[d.id] || d.userState || "active"
+      }));
+    }
+
+    function computeMetrics(deals) {
+      return {
+        total_deals: deals.length,
+        urgent_deals: deals.filter(d => d.urgent && d.userState !== "used").length,
+        saved_deals: deals.filter(d => d.userState === "saved").length,
+        used_deals: deals.filter(d => d.userState === "used").length
+      };
+    }
+
+    async function commit(nextState) {
+      state = nextState;
+      render();
+      if (window.pickle?.widget?.save) {
+        const deals = getDeals();
+        try {
+          await window.pickle.widget.save({
+            activeCat: state.activeCat,
+            activeStatus: state.activeStatus,
+            sortBy: state.sortBy,
+            userMarks: state.userMarks,
+            metrics: computeMetrics(deals)
+          });
+        } catch (e) {
+          console.error("Save error", e);
+        }
+      }
+    }
+
+    let toastTimer = null;
+    function showToast(msg) {
+      const el = document.getElementById("toast");
+      el.textContent = msg;
+      el.classList.add("show");
+      clearTimeout(toastTimer);
+      toastTimer = setTimeout(() => el.classList.remove("show"), 1800);
+    }
+
+    function copyText(text, btn) {
+      if (navigator.clipboard?.writeText) {
+        navigator.clipboard.writeText(text).catch(() => {});
+      } else {
+        const ta = document.createElement("textarea");
+        ta.value = text;
+        document.body.appendChild(ta);
+        ta.select();
+        document.execCommand("copy");
+        document.body.removeChild(ta);
+      }
+      const orig = btn.textContent;
+      btn.textContent = "已複製 ✓";
+      btn.classList.add("copied");
+      showToast(`已複製優惠碼：${text}`);
+      setTimeout(() => {
+        btn.textContent = orig;
+        btn.classList.remove("copied");
+      }, 1400);
+    }
+
+    function updateSummary(deals) {
+      const m = computeMetrics(deals);
+      document.getElementById("cnt-all").textContent = m.total_deals;
+      document.getElementById("cnt-urgent").textContent = m.urgent_deals;
+      document.getElementById("cnt-saved").textContent = m.saved_deals;
+      document.getElementById("cnt-used").textContent = m.used_deals;
+
+      const engaged = m.used_deals + m.saved_deals;
+      const pct = m.total_deals ? Math.round((engaged / m.total_deals) * 100) : 0;
+      document.getElementById("progress-text").textContent = `已使用 ${m.used_deals} ・ 已收藏 ${m.saved_deals} / ${m.total_deals}`;
+      document.getElementById("progress-pct").textContent = `${pct}%`;
+      document.getElementById("bar-used").style.width = `${m.total_deals ? (m.used_deals / m.total_deals) * 100 : 0}%`;
+      document.getElementById("bar-saved").style.width = `${m.total_deals ? (m.saved_deals / m.total_deals) * 100 : 0}%`;
+
+      document.getElementById("cat-cnt-all").textContent = `(${m.total_deals})`;
+      const codeCount = deals.filter(d => d.code).length;
+      document.getElementById("code-count-label").textContent = `含 ${codeCount} 個優惠碼`;
+
+      const distBar = document.getElementById("dist-bar");
+      distBar.innerHTML = "";
+      Object.keys(CAT_META).forEach(cat => {
+        const count = deals.filter(d => d.cat === cat).length;
+        const el = document.getElementById(`cat-cnt-${cat}`);
+        if (el) el.textContent = `(${count})`;
+        if (count > 0) {
+          const seg = document.createElement("div");
+          seg.className = "dist-seg";
+          seg.style.width = `${(count / m.total_deals) * 100}%`;
+          seg.style.background = CAT_META[cat].color;
+          seg.title = `${CAT_META[cat].label} (${count})`;
+          seg.onclick = () => commit({ ...state, activeCat: state.activeCat === cat ? "all" : cat });
+          distBar.appendChild(seg);
+        }
+      });
+    }
+
+    function renderSpotlight(deals) {
+      const box = document.getElementById("spotlight-box");
+      const container = document.getElementById("spotlight-items");
+      const urgentDeals = deals.filter(d => d.urgent && d.userState !== "used");
+      if (urgentDeals.length === 0) {
+        box.style.display = "none";
+        return;
+      }
+      box.style.display = "block";
+      container.innerHTML = "";
+      urgentDeals.forEach(d => {
+        const chip = document.createElement("div");
+        chip.className = "spot-chip";
+        chip.innerHTML = `
+          <div class="spot-merchant">${d.merchant}</div>
+          <div class="spot-name">${d.title}</div>
+          <div class="spot-exp">⏰ ${d.expires}</div>
+        `;
+        chip.onclick = () => {
+          commit({ ...state, activeStatus: "urgent", activeCat: "all", searchQuery: "" });
+        };
+        container.appendChild(chip);
+      });
+    }
+
+    function render() {
+      const deals = getDeals();
+      updateSummary(deals);
+      renderSpotlight(deals);
+
+      document.querySelectorAll(".cat-btn").forEach(btn => {
+        btn.classList.toggle("active", btn.dataset.cat === state.activeCat);
+      });
+      document.querySelectorAll(".kpi-card").forEach(card => {
+        card.classList.toggle("active", card.dataset.filterStatus === state.activeStatus);
+      });
+      document.getElementById("sort-select").value = state.sortBy || "default";
+
+      const q = (state.searchQuery || "").trim().toLowerCase();
+      document.getElementById("clear-search").classList.toggle("visible", q.length > 0);
+      if (document.getElementById("search-input").value !== (state.searchQuery || "")) {
+        document.getElementById("search-input").value = state.searchQuery || "";
+      }
+
+      let filtered = deals.filter(d => {
+        const matchCat = state.activeCat === "all" || d.cat === state.activeCat;
+        let matchStatus = true;
+        if (state.activeStatus === "urgent") matchStatus = d.urgent && d.userState !== "used";
+        else if (state.activeStatus === "saved") matchStatus = d.userState === "saved";
+        else if (state.activeStatus === "used") matchStatus = d.userState === "used";
+        const matchSearch = !q ||
+          d.merchant.toLowerCase().includes(q) ||
+          d.title.toLowerCase().includes(q) ||
+          d.desc.toLowerCase().includes(q) ||
+          (d.code && d.code.toLowerCase().includes(q));
+        return matchCat && matchStatus && matchSearch;
+      });
+
+      if (state.sortBy === "urgent") {
+        filtered = [...filtered].sort((a, b) => (b.urgent ? 1 : 0) - (a.urgent ? 1 : 0));
+      } else if (state.sortBy === "code") {
+        filtered = [...filtered].sort((a, b) => (b.code ? 1 : 0) - (a.code ? 1 : 0));
+      }
+
+      const statusNames = { all: "全部優惠", urgent: "即將到期優惠", saved: "已收藏優惠", used: "已使用優惠" };
+      const catName = state.activeCat === "all" ? "" : ` · ${CAT_META[state.activeCat]?.label || state.activeCat}`;
+      document.getElementById("section-title").textContent = `${statusNames[state.activeStatus] || "優惠"}${catName}（${filtered.length} 項）`;
+
+      const listEl = document.getElementById("deal-list");
+      listEl.innerHTML = "";
+
+      if (filtered.length === 0) {
+        listEl.innerHTML = `<div style="grid-column:1/-1;text-align:center;padding:28px;background:var(--pickle-surface-card,#fff);border-radius:12px;color:var(--pickle-text-secondary,#64748b);font-size:0.85rem;">暫時搵唔到符合條件嘅優惠</div>`;
+        return;
+      }
+
+      filtered.forEach(d => {
+        const card = document.createElement("div");
+        card.className = `deal-card cat-${d.cat} ${d.userState === "used" ? "is-used" : ""}`;
+
+        const top = document.createElement("div");
+        const header = document.createElement("div");
+        header.className = "card-header";
+        header.innerHTML = `
+          <div>
+            <div class="merchant-row">
+              <span class="cat-pill">${CAT_META[d.cat]?.label || d.cat}</span>
+              <span class="merchant-tag">${d.merchant}</span>
+            </div>
+            <div class="deal-title">${d.title}</div>
+          </div>
+          <span class="expiry-badge ${d.urgent ? "expiry-urgent" : "expiry-normal"}">${d.expires}</span>
+        `;
+        top.appendChild(header);
+
+        const desc = document.createElement("div");
+        desc.className = "deal-desc";
+        desc.textContent = d.desc;
+        top.appendChild(desc);
+
+        if (d.code) {
+          const promoRow = document.createElement("div");
+          promoRow.className = "promo-row";
+          const codeSpan = document.createElement("span");
+          codeSpan.className = "promo-code";
+          codeSpan.textContent = `優惠碼：${d.code}`;
+          const copyBtn = document.createElement("button");
+          copyBtn.className = "copy-btn";
+          copyBtn.textContent = "📋 複製";
+          copyBtn.onclick = () => copyText(d.code, copyBtn);
+          promoRow.appendChild(codeSpan);
+          promoRow.appendChild(copyBtn);
+          top.appendChild(promoRow);
+        }
+
+        const metaRow = document.createElement("div");
+        metaRow.innerHTML = `<span class="meta-chip">⚠️ ${d.condition}</span>`;
+        top.appendChild(metaRow);
+        card.appendChild(top);
+
+        const footer = document.createElement("div");
+        footer.className = "card-footer";
+
+        const actions = document.createElement("div");
+        actions.className = "action-group";
+
+        const saveBtn = document.createElement("button");
+        saveBtn.className = `action-btn ${d.userState === "saved" ? "saved" : ""}`;
+        saveBtn.textContent = d.userState === "saved" ? "📌 已收藏" : "📌 收藏";
+        saveBtn.onclick = () => {
+          const next = d.userState === "saved" ? "active" : "saved";
+          showToast(next === "saved" ? "已加入收藏 📌" : "已取消收藏");
+          commit({ ...state, userMarks: { ...state.userMarks, [d.id]: next } });
+        };
+
+        const usedBtn = document.createElement("button");
+        usedBtn.className = `action-btn ${d.userState === "used" ? "used" : ""}`;
+        usedBtn.textContent = d.userState === "used" ? "✓ 已用" : "標記已用";
+        usedBtn.onclick = () => {
+          const next = d.userState === "used" ? "active" : "used";
+          showToast(next === "used" ? "已標記為使用 ✓" : "已恢復為有效");
+          commit({ ...state, userMarks: { ...state.userMarks, [d.id]: next } });
+        };
+
+        actions.appendChild(saveBtn);
+        actions.appendChild(usedBtn);
+        footer.appendChild(actions);
+
+        const link = document.createElement("a");
+        link.className = "link-btn";
+        link.href = d.url;
+        link.target = "_blank";
+        link.rel = "noopener";
+        link.textContent = "詳情 ↗";
+        footer.appendChild(link);
+
+        card.appendChild(footer);
+        listEl.appendChild(card);
+      });
+    }
+
+    document.getElementById("cat-nav").addEventListener("click", e => {
+      const btn = e.target.closest(".cat-btn");
+      if (!btn) return;
+      commit({ ...state, activeCat: btn.dataset.cat });
+    });
+
+    document.getElementById("kpi-grid").addEventListener("click", e => {
+      const card = e.target.closest(".kpi-card");
+      if (!card) return;
+      commit({ ...state, activeStatus: card.dataset.filterStatus });
+    });
+
+    document.getElementById("sort-select").addEventListener("change", e => {
+      commit({ ...state, sortBy: e.target.value });
+    });
+
+    document.getElementById("search-input").addEventListener("input", e => {
+      state.searchQuery = e.target.value;
+      render();
+    });
+
+    document.getElementById("clear-search").addEventListener("click", () => {
+      state.searchQuery = "";
+      render();
+    });
+
+    if (window.pickle?.widget) {
+      window.pickle.widget.onstate = (data) => {
+        if (!data) return;
+        const marks = { ...(data.userMarks || {}) };
+        if (Array.isArray(data.deals)) {
+          data.deals.forEach(d => {
+            if (d.id && d.userState && d.userState !== "active" && !marks[d.id]) {
+              marks[d.id] = d.userState;
+            }
+          });
+        }
+        state = {
+          activeCat: data.activeCat || "all",
+          activeStatus: data.activeStatus || "all",
+          sortBy: data.sortBy || "default",
+          searchQuery: state.searchQuery || "",
+          userMarks: marks
+        };
+        render();
+      };
+
+      window.pickle.widget.oncommand = (command) => {
+        const [word, ...args] = command.trim().split(/\s+/);
+        if (word === "filter") {
+          const cat = args[0] || "all";
+          commit({ ...state, activeCat: cat });
+        } else if (word === "mark") {
+          const [dealId, status] = args;
+          if (["active", "saved", "used"].includes(status)) {
+            commit({ ...state, userMarks: { ...state.userMarks, [dealId]: status } });
+          }
+        }
+      };
+    }
+
+    render();
+  </script>
+</body>
+</html>

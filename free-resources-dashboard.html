@@ -1,0 +1,929 @@
+<!DOCTYPE html>
+<html lang="zh-HK">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>免費資源 Dashboard</title>
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      -webkit-tap-highlight-color: transparent;
+    }
+    body {
+      background-color: var(--pickle-surface-page, #f8f9fa);
+      color: var(--pickle-text-primary, #1a1a1a);
+      font: var(--pickle-type-body, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif);
+      padding: 12px;
+      line-height: 1.4;
+    }
+    header {
+      margin-bottom: 12px;
+    }
+    h1 {
+      font-size: 1.25rem;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      margin-bottom: 4px;
+    }
+    .subtitle {
+      font-size: 0.8rem;
+      color: var(--pickle-text-secondary, #666);
+    }
+
+    /* Summary Bar */
+    .summary-bar {
+      display: flex;
+      gap: 6px;
+      margin: 10px 0;
+      overflow-x: auto;
+      padding-bottom: 4px;
+    }
+    .stat-chip {
+      background: var(--pickle-surface-card, #fff);
+      border: 1px solid var(--pickle-border-hairline, #eee);
+      border-radius: var(--pickle-radius-pill, 999px);
+      padding: 4px 10px;
+      font-size: 0.75rem;
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      white-space: nowrap;
+      cursor: pointer;
+      font-weight: 500;
+    }
+    .stat-chip.active {
+      border-color: var(--pickle-text-primary, #000);
+      background: var(--pickle-surface-fill-soft, #e9ecef);
+    }
+
+    /* Category Nav */
+    .cat-nav {
+      display: flex;
+      gap: 6px;
+      overflow-x: auto;
+      margin-bottom: 12px;
+      padding-bottom: 2px;
+      scrollbar-width: none;
+    }
+    .cat-nav::-webkit-scrollbar {
+      display: none;
+    }
+    .cat-btn {
+      background: var(--pickle-surface-card, #fff);
+      border: 1px solid var(--pickle-border-hairline, #e2e8f0);
+      border-radius: var(--pickle-radius-tile, 8px);
+      padding: 6px 10px;
+      font-size: 0.8rem;
+      color: var(--pickle-text-secondary, #64748b);
+      cursor: pointer;
+      white-space: nowrap;
+      transition: all 0.15s ease;
+    }
+    .cat-btn.active {
+      background: var(--pickle-text-primary, #0f172a);
+      color: var(--pickle-surface-card, #fff);
+      border-color: var(--pickle-text-primary, #0f172a);
+      font-weight: 600;
+    }
+
+    /* Resource Cards */
+    .resource-list {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+    .res-card {
+      background: var(--pickle-surface-card, #fff);
+      border: 1px solid var(--pickle-border-hairline, #e2e8f0);
+      border-radius: var(--pickle-radius-card, 12px);
+      padding: 12px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.02);
+    }
+    .card-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .card-title-group {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .priority-badge {
+      background: var(--pickle-surface-fill-soft, #e2e8f0);
+      color: var(--pickle-text-primary, #0f172a);
+      font-size: 0.7rem;
+      font-weight: 700;
+      padding: 2px 6px;
+      border-radius: 4px;
+    }
+    .res-name {
+      font-weight: 700;
+      font-size: 0.95rem;
+      color: var(--pickle-text-primary, #0f172a);
+      text-decoration: none;
+    }
+    .status-badge {
+      padding: 3px 8px;
+      border-radius: var(--pickle-radius-pill, 999px);
+      font-size: 0.7rem;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      cursor: pointer;
+      user-select: none;
+    }
+    .status-green {
+      background: #e6f7ed;
+      color: #0e8a36;
+    }
+    .status-yellow {
+      background: #fef7e0;
+      color: #b06000;
+    }
+    .status-red {
+      background: #fce8e6;
+      color: #c5221f;
+    }
+    .status-gray {
+      background: #f1f3f4;
+      color: #5f6368;
+    }
+
+    .meta-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      font-size: 0.72rem;
+    }
+    .meta-chip {
+      background: var(--pickle-surface-fill-faint, #f8fafc);
+      border: 1px solid var(--pickle-border-hairline, #f1f5f9);
+      padding: 2px 6px;
+      border-radius: 4px;
+      color: var(--pickle-text-secondary, #475569);
+    }
+    .meta-chip.card-free {
+      color: #0e8a36;
+      border-color: #b7eb8f;
+      background: #f6ffed;
+    }
+    .meta-chip.card-req {
+      color: #d4380d;
+      border-color: #ffbb96;
+      background: #fff2e8;
+    }
+
+    .quota-box {
+      background: var(--pickle-surface-fill-faint, #f8fafc);
+      border-radius: 6px;
+      padding: 8px;
+      font-size: 0.78rem;
+    }
+    .quota-title {
+      font-weight: 600;
+      margin-bottom: 2px;
+      color: var(--pickle-text-primary, #1e293b);
+    }
+    .quota-desc {
+      color: var(--pickle-text-secondary, #475569);
+      line-height: 1.35;
+    }
+
+    .fallback-box {
+      border-top: 1px dashed var(--pickle-border-hairline, #e2e8f0);
+      padding-top: 6px;
+      font-size: 0.72rem;
+      color: var(--pickle-text-secondary, #64748b);
+      display: flex;
+      align-items: flex-start;
+      gap: 4px;
+    }
+    .fallback-icon {
+      flex-shrink: 0;
+    }
+
+    .card-footer {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-top: 2px;
+    }
+    .link-btn {
+      font-size: 0.75rem;
+      color: #1a73e8;
+      text-decoration: none;
+      font-weight: 600;
+      display: inline-flex;
+      align-items: center;
+      gap: 2px;
+    }
+    .tap-hint {
+      font-size: 0.68rem;
+      color: var(--pickle-text-tertiary, #94a3b8);
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>🛠️ 免費資源 Dashboard</h1>
+    <div class="subtitle">AI API・雲端主機・GPU・TTS・網站託管 備援鏈</div>
+  </header>
+
+  <div class="summary-bar" id="summary-bar">
+    <div class="stat-chip active" data-filter-status="all">全部 <span id="cnt-all">0</span></div>
+    <div class="stat-chip" data-filter-status="green">🟢 充足 <span id="cnt-green">0</span></div>
+    <div class="stat-chip" data-filter-status="yellow">🟡 偏低/即將到期 <span id="cnt-yellow">0</span></div>
+    <div class="stat-chip" data-filter-status="red">🔴 用完/過期 <span id="cnt-red">0</span></div>
+    <div class="stat-chip" data-filter-status="gray">⚪ 未領取 <span id="cnt-gray">0</span></div>
+  </div>
+
+  <nav class="cat-nav" id="cat-nav">
+    <button class="cat-btn active" data-cat="all">全部</button>
+    <button class="cat-btn" data-cat="ai">🤖 AI API</button>
+    <button class="cat-btn" data-cat="vps">🖥️ 雲端主機</button>
+    <button class="cat-btn" data-cat="gpu">⚡ GPU 算力</button>
+    <button class="cat-btn" data-cat="tts">🎙️ TTS 語音</button>
+    <button class="cat-btn" data-cat="web">🌐 網站託管</button>
+  </nav>
+
+  <main class="resource-list" id="resource-list"></main>
+
+  <script>
+    const INITIAL_RESOURCES = [
+      // AI API
+      {
+        id: "google-ai-studio",
+        name: "Google AI Studio",
+        cat: "ai",
+        priority: "P1",
+        status: "green",
+        url: "https://aistudio.google.com/",
+        quota: "Gemini 4 Hydrogen / 3.8 Flash / 3.5 Flash-Lite / Gemma 4 免費 tokens ＋ Gemini Decision 1 每日 10,000 次",
+        reset: "每日重置",
+        card: false,
+        used: "0%",
+        fallback: "主力推手；若達每日限額，切換至 P2 Groq。"
+      },
+      {
+        id: "groq-cloud",
+        name: "Groq Cloud",
+        cat: "ai",
+        priority: "P2",
+        status: "green",
+        url: "https://console.groq.com/",
+        quota: "免費層 30 RPM / 1,000 RPD / 8K TPM / 200K TPD（支援 gpt-oss-120b, qwen3.8-27b）",
+        reset: "每日重置",
+        card: false,
+        used: "0%",
+        fallback: "極速推理備援；用盡轉 P3 OpenCode Zen 或 P4 CodeRouter。"
+      },
+      {
+        id: "opencode-zen",
+        name: "OpenCode Zen (限時)",
+        cat: "ai",
+        priority: "P3",
+        status: "gray",
+        url: "https://www.aipromonow.com/en/promos/opencode-zen-hy4-flash-free-nov2026",
+        quota: "11/22 實測 11 款免費：騰訊 hy4-flash-free（1M context）至 11/30，另有 mimo-v2.6-flash-free、longcat-2.5-free（beam-free 港澳不可用）",
+        reset: "2026-11-30 止",
+        card: false,
+        used: "未領取",
+        fallback: "寫 Code / 長文本限時主力；到期後轉 P4 CodeRouter 或 P5 Token Factory。"
+      },
+      {
+        id: "coderouter-tokenwatt",
+        name: "CodeRouter TokenWatt (限時新)",
+        cat: "ai",
+        priority: "P4",
+        status: "gray",
+        url: "https://www.coderouter.io/blog/free-open-models-qwen38-qwen36-pi-claude-code",
+        quota: "11/22 新推出 14 日免費：tokenwatt-qwen3.8-27b（262K）、qwen3.6-35b-a3b 及 Claude Code pi 適配器，每日 300 次（並發 2）",
+        reset: "2026-12-06 止",
+        card: false,
+        used: "未領取",
+        fallback: "Claude Code / Qwen 3.8 限時備援；直接免費註冊用。"
+      },
+      {
+        id: "packet-token-factory",
+        name: "packet.ai Token Factory (新)",
+        cat: "ai",
+        priority: "P5",
+        status: "gray",
+        url: "https://dash.packet.ai/serverless",
+        quota: "11/17 新推出免費層：免費調用 DeepSeek V4.1 Flash、MiniMax M3.1 Flash、Qwen2.5 1.5B Instruct",
+        reset: "免費推廣中",
+        card: false,
+        used: "未領取",
+        fallback: "免卡即用新備援；支援 DeepSeek V4.1 Flash / MiniMax M3.1 Flash。"
+      },
+      {
+        id: "amd-token-lab",
+        name: "AMD Token Lab (新)",
+        cat: "ai",
+        priority: "P6",
+        status: "gray",
+        url: "https://aifree.dev/news/amd-token-lab-free-api-deepseek-v4-qwen3-8-gemma-4",
+        quota: "加入免費 AMD AI Developer Program 送 Token Lab 點數（DeepSeek V4, Qwen3.8, Gemma 4, GLM-5.3）＋ $100 雲算力",
+        reset: "30 日（可延 15 日）",
+        card: false,
+        used: "未領取",
+        fallback: "免卡拎 DeepSeek V4 / Qwen3.8 免費 API。"
+      },
+      {
+        id: "cloudflare-workers-ai",
+        name: "Cloudflare Workers AI",
+        cat: "ai",
+        priority: "P7",
+        status: "green",
+        url: "https://developers.cloudflare.com/workers-ai/",
+        quota: "每日免費 10,000 Neurons 算力（11/18 新增開源 Clairic 27B / Clairic-flash 9B 文件抽取模型）",
+        reset: "每日 UTC 00:00",
+        card: false,
+        used: "0%",
+        fallback: "輕量邊緣推理／PDF 抽取兜底；用盡轉 P8 OpenRouter。"
+      },
+      {
+        id: "openrouter",
+        name: "OpenRouter",
+        cat: "ai",
+        priority: "P8",
+        status: "green",
+        url: "https://openrouter.ai/",
+        quota: ":free 開源模型池（11/22 實測 11 款免費模型；20 RPM / 每日 50 次；買過 10+ credits 後升至 1,000 次/日）",
+        reset: "每日重置",
+        card: false,
+        used: "0%",
+        fallback: "聚合免費模型兜底；未買點數前每日限 50 次。"
+      },
+      {
+        id: "dahl-oci-vercel",
+        name: "Dahl / OCI $300 / Vercel AI",
+        cat: "ai",
+        priority: "P9",
+        status: "gray",
+        url: "https://aifree.dev/offer/dahl-inference-free-tokens",
+        quota: "Dahl 送 1 億免費 tokens；Oracle Cloud 新戶 $300（30日，需卡）可調 Grok 4.7 / Gemini 2.5 Pro；Vercel AI Gateway 每月 $5",
+        reset: "依各平台規則",
+        card: false,
+        used: "未領取",
+        fallback: "大額試用／多模型兜底備援。"
+      },
+      {
+        id: "mistral-github-retired",
+        name: "Mistral AI / GitHub Models",
+        cat: "ai",
+        priority: "停用",
+        status: "red",
+        url: "https://console.mistral.ai/",
+        quota: "政策已改：GitHub Models 已於 2026-07-30 退役；Mistral Free 模式已取消 API（須綁卡按量計費）",
+        reset: "已停止免費 API",
+        card: true,
+        used: "已停用",
+        fallback: "已從免費備援移除。"
+      },
+
+      // VPS / Cloud
+      {
+        id: "oracle-cloud",
+        name: "Oracle Cloud (OCI)",
+        cat: "vps",
+        priority: "P1",
+        status: "gray",
+        url: "https://www.oracle.com/cloud/free/",
+        quota: "2 ARM OCPU + 12GB RAM（Ampere A1 已減半）+ 2 台 AMD VM + 200GB 磁碟 + 10TB/月流量",
+        reset: "永久免費",
+        card: true,
+        used: "未領取",
+        fallback: "免費雲主機主力（留意閒置超過 7 日會被回收）；若審核失敗改用 P2 Render。"
+      },
+      {
+        id: "render",
+        name: "Render",
+        cat: "vps",
+        priority: "P2",
+        status: "green",
+        url: "https://render.com/",
+        quota: "每月 750 小時免費 Web Service（512MB RAM），15 分鐘無請求休眠",
+        reset: "每月重置",
+        card: false,
+        used: "0%",
+        fallback: "免卡 Web API 首選；需注意 15 分鐘無請求會休眠。"
+      },
+      {
+        id: "koyeb",
+        name: "Koyeb (需卡)",
+        cat: "vps",
+        priority: "P3",
+        status: "green",
+        url: "https://koyeb.com/",
+        quota: "1 台免費 Nano 實例（512MB RAM, 0.1 vCPU）；現已改為 1 小時無流量休眠＋須綁卡預授權 $29 美元",
+        reset: "永久免費（1h 休眠）",
+        card: true,
+        used: "0%",
+        fallback: "政策已收緊（須防欺詐綁卡驗證）；免卡建議改用 P2 Render。"
+      },
+      {
+        id: "northflank",
+        name: "Northflank",
+        cat: "vps",
+        priority: "P4",
+        status: "gray",
+        url: "https://northflank.com/",
+        quota: "開發者免費 Sandbox：2 個 Micro 服務 + 1 個免費 DB（Postgres/Redis）",
+        reset: "永久免費層",
+        card: false,
+        used: "未領取",
+        fallback: "容器與數據庫混合備援。"
+      },
+      {
+        id: "railway",
+        name: "Railway (小額免費)",
+        cat: "vps",
+        priority: "P5",
+        status: "gray",
+        url: "https://railway.com/",
+        quota: "Free 方案每月 $1 用量（上限 1 vCPU / 0.5GB RAM），新帳號送 $5 試用額（30 日）；另 Fly.io 已取消免費層",
+        reset: "每月重置",
+        card: false,
+        used: "未領取",
+        fallback: "輕量全端容器備援；留意 Fly.io 現已全面改為付費隨用隨付。"
+      },
+
+      // GPU Compute
+      {
+        id: "google-colab",
+        name: "Google Colab",
+        cat: "gpu",
+        priority: "P1",
+        status: "green",
+        url: "https://colab.research.google.com/",
+        quota: "免費 Nvidia T4 GPU（16GB VRAM），Jupyter Notebook 環境，最長 12 小時/次",
+        reset: "每日動態分配",
+        card: false,
+        used: "0%",
+        fallback: "日常研究與生圖主力；當日限額用完切換至 P2 Kaggle。"
+      },
+      {
+        id: "kaggle",
+        name: "Kaggle",
+        cat: "gpu",
+        priority: "P2",
+        status: "green",
+        url: "https://www.kaggle.com/code",
+        quota: "每週 30 小時免費 GPU 算力（可選 2x Nvidia T4 16GB 或 P100 16GB）",
+        reset: "每週六重置",
+        card: false,
+        used: "0%",
+        fallback: "跑長任務首選；30 小時用完切換至 P3 Lightning AI。"
+      },
+      {
+        id: "lightning-ai",
+        name: "Lightning AI",
+        cat: "gpu",
+        priority: "P3",
+        status: "gray",
+        url: "https://lightning.ai/",
+        quota: "規則更新：註冊送 5 Credits＋綁卡再送 25 Credits（共 30 Credits / 12 個月有效；需手機驗證）",
+        reset: "12 個月有效",
+        card: false,
+        used: "未領取",
+        fallback: "高性價比 GPU 備援；免卡僅 5 Credits，大量算力轉 P1/P2/P4。"
+      },
+      {
+        id: "modal",
+        name: "Modal",
+        cat: "gpu",
+        priority: "P4",
+        status: "gray",
+        url: "https://modal.com/",
+        quota: "每月 $30 美元免費 Serverless GPU 額度（支援秒級調用 A10G/A100）",
+        reset: "每月 1 號重置",
+        card: true,
+        used: "未領取",
+        fallback: "自動化 Serverless GPU 首選；額度用完轉 P5 Hugging Face。"
+      },
+      {
+        id: "hugging-face-spaces",
+        name: "Hugging Face Spaces",
+        cat: "gpu",
+        priority: "P5",
+        status: "green",
+        url: "https://huggingface.co/spaces",
+        quota: "免費 CPU 容器；部分 Spaces 支援動態 ZeroGPU（Nvidia A100 分時共享）",
+        reset: "實時共享調用",
+        card: false,
+        used: "0%",
+        fallback: "免費 Demo 與公開模型體驗兜底。"
+      },
+
+      // TTS
+      {
+        id: "edge-tts",
+        name: "Edge TTS (微軟神經語音)",
+        cat: "tts",
+        priority: "P1",
+        status: "green",
+        url: "https://github.com/rany2/edge-tts",
+        quota: "100% 免費、無額度限制、免 API Key、免註冊；高音質粵語/國語/英語",
+        reset: "永久無限制",
+        card: false,
+        used: "0%",
+        fallback: "永遠的主力兼終極防線！需要高擬真情感複製時才轉 P2。"
+      },
+      {
+        id: "xiaomi-mimo-tts",
+        name: "Xiaomi MiMo TTS (新)",
+        cat: "tts",
+        priority: "P2",
+        status: "gray",
+        url: "https://aifree.dev/offer/xiaomi-mimo-tts-free",
+        quota: "11/15 新推出限時免費：mimo-v2.5-tts、聲音複製 (voiceclone) 與設計 (voicedesign) 全免",
+        reset: "限時免費",
+        card: false,
+        used: "未領取",
+        fallback: "免費聲音複製新選擇；限時免費完結後轉 P3 HeyGen / P4 Fish Audio。"
+      },
+      {
+        id: "heygen-voice-turbo",
+        name: "HeyGen Voice Turbo Free (限時)",
+        cat: "tts",
+        priority: "P3",
+        status: "gray",
+        url: "https://developers.heygen.com/docs/models/heygen-voice",
+        quota: "至 11/30 免費：heygen-voice-1-turbo-free 免費調用（30 RPM，支援公開聲線及 Instant 聲音複製；不支援粵語）",
+        reset: "2026-11-30 止",
+        card: false,
+        used: "未領取",
+        fallback: "英／國語高質免費 TTS 備援；粵語請留用 P1 Edge TTS 或 P4 Fish Audio。"
+      },
+      {
+        id: "fish-audio",
+        name: "Fish Audio",
+        cat: "tts",
+        priority: "P4",
+        status: "gray",
+        url: "https://fish.audio/",
+        quota: "註冊贈送免費額度＋每日簽到點數，極強 0-Shot 聲音複製（粵語極佳）；新帳號至 11/30 免費調用 s2.1-pro-free",
+        reset: "每日簽到 / 11-30 止",
+        card: false,
+        used: "未領取",
+        fallback: "聲音複製與精品粵語首選；點數用完切換至 P5 ElevenLabs。"
+      },
+      {
+        id: "elevenlabs",
+        name: "ElevenLabs",
+        cat: "tts",
+        priority: "P5",
+        status: "gray",
+        url: "https://elevenlabs.io/",
+        quota: "免費層每月 10,000 字元（約 10–15 分鐘高品質語音），不含商用授權與即時聲音複製",
+        reset: "每月循環重置",
+        card: false,
+        used: "未領取",
+        fallback: "國際頂級語音質感備援（非商用）；1 萬字用完切換至 P6 Deepgram。"
+      },
+      {
+        id: "deepgram",
+        name: "Deepgram Aura",
+        cat: "tts",
+        priority: "P6",
+        status: "gray",
+        url: "https://deepgram.com/",
+        quota: "註冊即送 $200 美元免費額度（無期限不過期，支援極低延遲 Aura-2 TTS 與即時語音識別）",
+        reset: "永久不過期",
+        card: false,
+        used: "未領取",
+        fallback: "即時對話與超低延遲備援；金額滿期轉 P1 Edge TTS。"
+      },
+      {
+        id: "cartesia",
+        name: "Cartesia Sonic",
+        cat: "tts",
+        priority: "P7",
+        status: "gray",
+        url: "https://cartesia.ai/",
+        quota: "政策確認：Free 方案每月 20,000 Credits（約 27 分鐘超低延遲 <150ms TTS，2 並發）",
+        reset: "每月重置",
+        card: false,
+        used: "未領取",
+        fallback: "極速語音串流備援（每月可續用）。"
+      },
+
+      // Web / DB
+      {
+        id: "cloudflare-pages",
+        name: "Cloudflare Workers & Pages",
+        cat: "web",
+        priority: "P1",
+        status: "green",
+        url: "https://dash.cloudflare.com/",
+        quota: "靜態資源不限流量；Workers 每日 10 萬次請求；D1 數據庫免費 5GB",
+        reset: "每日重置 / 永久",
+        card: false,
+        used: "0%",
+        fallback: "前端與邊緣運算絕對主力；若需 Node.js SSR 轉 P2 Vercel。"
+      },
+      {
+        id: "vercel",
+        name: "Vercel",
+        cat: "web",
+        priority: "P2",
+        status: "green",
+        url: "https://vercel.com/",
+        quota: "Hobby 免費層，每月 100GB 頻寬、Serverless Functions、自動 CI/CD",
+        reset: "每月重置",
+        card: false,
+        used: "0%",
+        fallback: "Next.js 全端部署首選；頻寬若逼近 100GB 切換回 P1。"
+      },
+      {
+        id: "supabase",
+        name: "Supabase",
+        cat: "web",
+        priority: "P3",
+        status: "gray",
+        url: "https://supabase.com/",
+        quota: "2 個免費專案（500MB PostgreSQL、1GB 儲存空間、5 萬 MAU 認證）",
+        reset: "永久免費（7天無請求休眠）",
+        card: false,
+        used: "未領取",
+        fallback: "全端數據庫與後端主力；若需純 Postgres 永不休眠轉 P4。"
+      },
+      {
+        id: "neon",
+        name: "Neon",
+        cat: "web",
+        priority: "P4",
+        status: "gray",
+        url: "https://neon.tech/",
+        quota: "11/22 核實擴容：免費層 100 個專案（各 1GB／100 CU-hr/月，總計 20GB），5 分鐘閒置休眠；另設免登入 Claimable 臨時 DB",
+        reset: "永久免費層",
+        card: false,
+        used: "未領取",
+        fallback: "Serverless Postgres 升級主力；注意 100 CU-hr 約等於 400 小時連續運行。"
+      },
+      {
+        id: "polardb-x-zero",
+        name: "PolarDB-X Zero (新)",
+        cat: "web",
+        priority: "P5",
+        status: "gray",
+        url: "https://www.alibabacloud.com/blog/polardb-x-zero-get-an-ai-friendly-database-in-30-seconds-with-a-single-command_603794",
+        quota: "11/20 新推出：免註冊、免綁卡，1 個 HTTP 請求 30 秒建 MySQL 兼容分散式 DB（內置 Vector＋MCP/Mem0 支援）",
+        reset: "30 日（自動回收）",
+        card: false,
+        used: "未領取",
+        fallback: "AI Agent 零門檻臨時 DB 首選；長期專案用 P3 Supabase / P4 Neon。"
+      },
+      {
+        id: "netlify",
+        name: "Netlify (改制)",
+        cat: "web",
+        priority: "P6",
+        status: "gray",
+        url: "https://netlify.com/",
+        quota: "政策已改 Credits 制：Free 方案每月 300 Credits（Deploy 15 / 頻寬 20/GB / 運算 10/GB-hr，超額暫停）",
+        reset: "每月重置",
+        card: false,
+        used: "未領取",
+        fallback: "前端靜態備援；計費改制後流量大易停站，優先用 P1 Cloudflare。"
+      },
+      {
+        id: "github-pages",
+        name: "GitHub Pages",
+        cat: "web",
+        priority: "P7",
+        status: "green",
+        url: "https://pages.github.com/",
+        quota: "靜態網站託管，每月 100GB 頻寬，公共倉庫無上限部署",
+        reset: "永久免費",
+        card: false,
+        used: "0%",
+        fallback: "靜態展示與文檔兜底。"
+      }
+    ];
+
+    let state = window.pickle?.widget?.state ?? {
+      resources: INITIAL_RESOURCES,
+      activeCat: "all",
+      activeStatus: "all",
+      metrics: computeMetrics(INITIAL_RESOURCES)
+    };
+
+    function computeMetrics(list) {
+      let green = 0, yellow = 0, red = 0, gray = 0;
+      list.forEach(r => {
+        if (r.status === "green") green++;
+        else if (r.status === "yellow") yellow++;
+        else if (r.status === "red") red++;
+        else if (r.status === "gray") gray++;
+      });
+      return {
+        total_resources: list.length,
+        green_count: green,
+        yellow_count: yellow,
+        red_count: red,
+        gray_count: gray
+      };
+    }
+
+    async function commit(nextState) {
+      state = nextState;
+      state.metrics = computeMetrics(state.resources);
+      render();
+      if (window.pickle?.widget?.save) {
+        try {
+          await window.pickle.widget.save(state);
+        } catch (e) {
+          console.error("Save rejected", e);
+        }
+      }
+    }
+
+    const STATUS_CYCLE = {
+      "green": "yellow",
+      "yellow": "red",
+      "red": "gray",
+      "gray": "green"
+    };
+
+    const STATUS_TEXT = {
+      "green": "🟢 充足",
+      "yellow": "🟡 偏低/即將到期",
+      "red": "🔴 用完/過期",
+      "gray": "⚪ 未領取"
+    };
+
+    function render() {
+      // Update counters
+      const metrics = state.metrics;
+      document.getElementById("cnt-all").textContent = metrics.total_resources;
+      document.getElementById("cnt-green").textContent = metrics.green_count;
+      document.getElementById("cnt-yellow").textContent = metrics.yellow_count;
+      document.getElementById("cnt-red").textContent = metrics.red_count;
+      document.getElementById("cnt-gray").textContent = metrics.gray_count;
+
+      // Update Nav active classes
+      document.querySelectorAll(".cat-btn").forEach(btn => {
+        btn.classList.toggle("active", btn.dataset.cat === state.activeCat);
+      });
+      document.querySelectorAll(".stat-chip").forEach(chip => {
+        chip.classList.toggle("active", chip.dataset.filterStatus === state.activeStatus);
+      });
+
+      // Filter resources
+      const container = document.getElementById("resource-list");
+      container.innerHTML = "";
+
+      const filtered = state.resources.filter(r => {
+        const matchCat = (state.activeCat === "all" || r.cat === state.activeCat);
+        const matchStatus = (state.activeStatus === "all" || r.status === state.activeStatus);
+        return matchCat && matchStatus;
+      });
+
+      if (filtered.length === 0) {
+        container.innerHTML = `<div style="text-align:center; padding: 30px; color: var(--pickle-text-secondary);">沒有符合條件的資源</div>`;
+        return;
+      }
+
+      filtered.forEach(res => {
+        const card = document.createElement("div");
+        card.className = "res-card";
+
+        const cardHeader = document.createElement("div");
+        cardHeader.className = "card-header";
+
+        const titleGroup = document.createElement("div");
+        titleGroup.className = "card-title-group";
+
+        const badge = document.createElement("span");
+        badge.className = "priority-badge";
+        badge.textContent = res.priority;
+
+        const name = document.createElement("span");
+        name.className = "res-name";
+        name.textContent = res.name;
+
+        titleGroup.appendChild(badge);
+        titleGroup.appendChild(name);
+
+        const statusBtn = document.createElement("div");
+        statusBtn.className = `status-badge status-${res.status}`;
+        statusBtn.textContent = STATUS_TEXT[res.status];
+        statusBtn.title = "點擊切換狀態燈號";
+        statusBtn.onclick = () => {
+          const nextStatus = STATUS_CYCLE[res.status];
+          const updated = state.resources.map(item => item.id === res.id ? { ...item, status: nextStatus } : item);
+          commit({ ...state, resources: updated });
+          if (window.pickle?.widget?.signal) {
+            window.pickle.widget.signal(`用戶將 ${res.name} 的狀態切換為 ${STATUS_TEXT[nextStatus]}。`);
+          }
+        };
+
+        cardHeader.appendChild(titleGroup);
+        cardHeader.appendChild(statusBtn);
+
+        const metaRow = document.createElement("div");
+        metaRow.className = "meta-row";
+
+        const cardChip = document.createElement("span");
+        cardChip.className = `meta-chip ${res.card ? 'card-req' : 'card-free'}`;
+        cardChip.textContent = res.card ? "💳 需綁卡" : "❌ 免信用卡";
+
+        const resetChip = document.createElement("span");
+        resetChip.className = "meta-chip";
+        resetChip.textContent = `🔄 ${res.reset}`;
+
+        const usedChip = document.createElement("span");
+        usedChip.className = "meta-chip";
+        usedChip.textContent = `📊 已用: ${res.used}`;
+
+        metaRow.appendChild(cardChip);
+        metaRow.appendChild(resetChip);
+        metaRow.appendChild(usedChip);
+
+        const quotaBox = document.createElement("div");
+        quotaBox.className = "quota-box";
+        quotaBox.innerHTML = `
+          <div class="quota-title">免費配額</div>
+          <div class="quota-desc">${res.quota}</div>
+        `;
+
+        const fallbackBox = document.createElement("div");
+        fallbackBox.className = "fallback-box";
+        fallbackBox.innerHTML = `
+          <span class="fallback-icon">↳</span>
+          <span><strong>備援建議：</strong>${res.fallback}</span>
+        `;
+
+        const footer = document.createElement("div");
+        footer.className = "card-footer";
+        footer.innerHTML = `
+          <a class="link-btn" href="${res.url}" target="_blank" rel="noopener">申請／控制台 ↗</a>
+          <span class="tap-hint">點燈號可切換狀態</span>
+        `;
+
+        card.appendChild(cardHeader);
+        card.appendChild(metaRow);
+        card.appendChild(quotaBox);
+        card.appendChild(fallbackBox);
+        card.appendChild(footer);
+
+        container.appendChild(card);
+      });
+    }
+
+    // Event listeners for Categories
+    document.getElementById("cat-nav").addEventListener("click", e => {
+      const btn = e.target.closest(".cat-btn");
+      if (!btn) return;
+      const cat = btn.dataset.cat;
+      commit({ ...state, activeCat: cat });
+    });
+
+    // Event listeners for Status filters
+    document.getElementById("summary-bar").addEventListener("click", e => {
+      const chip = e.target.closest(".stat-chip");
+      if (!chip) return;
+      const st = chip.dataset.filterStatus;
+      commit({ ...state, activeStatus: st });
+    });
+
+    // Pickle widget interfaces
+    if (window.pickle?.widget) {
+      window.pickle.widget.onstate = (data) => {
+        if (data) {
+          state = data;
+          render();
+        }
+      };
+
+      window.pickle.widget.oncommand = (command) => {
+        const [word, ...args] = command.trim().split(/\s+/);
+        if (word === "filter") {
+          const cat = args[0] || "all";
+          commit({ ...state, activeCat: cat });
+        } else if (word === "status") {
+          const [resId, color] = args;
+          if (["green", "yellow", "red", "gray"].includes(color)) {
+            const updated = state.resources.map(item => item.id === resId ? { ...item, status: color } : item);
+            commit({ ...state, resources: updated });
+          }
+        }
+      };
+    }
+
+    // Initial render
+    render();
+  </script>
+</body>
+</html>
