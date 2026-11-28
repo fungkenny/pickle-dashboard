@@ -502,7 +502,7 @@
     <div class="hero-top">
       <div>
         <div class="hero-title">🏷️ 香港優惠速遞 Dashboard</div>
-        <div class="hero-sub">最後掃描：2026-11-27（HKT）｜每日 09:30 更新</div>
+        <div class="hero-sub">最後掃描：2026-11-28（HKT）｜每日 09:30 更新</div>
       </div>
       <div class="live-pill"><span class="live-dot"></span>自動監察中</div>
     </div>
@@ -791,7 +791,7 @@
         id: "keeta-unionpay-weekday",
         cat: "food",
         merchant: "KeeTa × 銀聯 / BoC Pay+ / Apple Pay",
-        title: "逢週一至五單筆滿 HK$180 即減 HK$15（今日 11/27 適用）",
+        title: "逢週一至五單筆滿 HK$180 即減 HK$15（週六不適用）",
         desc: "10/26–11/30 逢星期一至五以銀聯（含 Apple Pay 綁定銀聯卡、BoC Pay+）支付 KeeTa 外送或自取滿 $180 即減 $15；全期最多享 4 次。",
         code: "",
         condition: "逢週一至五適用，每日限享 1 次",
@@ -804,7 +804,7 @@
         id: "foodpanda-hsbc-wed",
         cat: "food",
         merchant: "foodpanda × 滙豐 pandapro",
-        title: "逢周三至周六滿 HK$200 享 5% PandaPay 回贈（今日 11/27 適用）",
+        title: "逢周三至周六滿 HK$200 享 5% PandaPay 回贈（今日 11/28 適用）",
         desc: "pandapro 會員於周三至周六用滙豐信用卡落外賣或自取單折後滿 $200 享 5% PandaPay 回贈（每單上限 $15）。",
         code: "",
         condition: "須為 pandapro 會員並用滙豐卡",
@@ -895,13 +895,26 @@
         id: "maxims-mx",
         cat: "dining",
         merchant: "美心 MX",
-        title: "70 周年最後一週（11/23–29）77 折：$38 漢堡扒／$43 焗豬｜$49 花膠鍋",
+        title: "70 周年最後一週（至明日 11/29）77 折：$38 漢堡扒／$43 焗豬｜$49 花膠鍋",
         desc: "11/23–29 午晚市漢堡扒飯 $38、焗豬扒飯 $43、晚市花膠雞水餃鍋 $49；另《起筷》$8 券至 11/30。",
         code: "",
         condition: "只限堂食及外賣自取",
-        expires: "11/29 止",
-        urgent: false,
+        expires: "明日 11/29 止",
+        urgent: true,
         url: "https://www.maximsmx.com.hk/",
+        userState: "active"
+      },
+      {
+        id: "kfc-weekend-nov29",
+        cat: "dining",
+        merchant: "KFC 肯德基",
+        title: "週末限定（11/28–29）：六件雞 $50｜超值二人分享餐 $79",
+        desc: "11/28–29 早上 11:00 後堂食及外賣自取享六件雞 $50（原 $132）、二人餐 $79（原 $188）；不適用快脆送及部分分店。",
+        code: "",
+        condition: "11:00 後堂食／自取（明日 11/29 止）",
+        expires: "明日 11/29 止",
+        urgent: true,
+        url: "https://www.kfchk.com/",
         userState: "active"
       },
       {
@@ -996,19 +1009,6 @@
         userState: "active"
       },
       {
-        id: "tripcom-ae-bogo-nov27",
-        cat: "travel",
-        merchant: "Trip.com 機場快綫",
-        title: "今日（11/27）10:00 開搶！機場快綫車票限時買一送一",
-        desc: "11/27 星期五早上 10:00 準時於 Trip.com 開搶機場快綫單程／來回車票買一送一，數量有限，先到先得。",
-        code: "",
-        condition: "今日 11/27 10:00 開搶，名額有限",
-        expires: "今日 11/27 止",
-        urgent: true,
-        url: "https://hk.trip.com/",
-        userState: "active"
-      },
-      {
         id: "hx-tuesday",
         cat: "travel",
         merchant: "香港航空",
@@ -1048,24 +1048,11 @@
         userState: "active"
       },
       {
-        id: "wellcome-online-nov27",
-        cat: "shopping",
-        merchant: "惠康 / Market Place / yuu 網購",
-        title: "今日（11/27）一日限定：網購滿 $888 全場 88 折兼包送貨上門",
-        desc: "11/27 當日於活動頁領券，單一交易折實滿 $888 享全場 88 折兼免費送貨上門，適合囤洗衣液、廚房紙、廁紙等日用品。",
-        code: "",
-        condition: "只限今日 11/27 網購滿 $888（指定貨品除外）",
-        expires: "今日 11/27 止",
-        urgent: true,
-        url: "https://www.wellcome.com.hk/",
-        userState: "active"
-      },
-      {
         id: "yoho-bf-nov30",
         cat: "shopping",
         merchant: "友和 YOHO × 滙豐卡",
-        title: "黑五 4 晚 22:00 閃購（今晚數碼狂歡）＋滙豐滿 $2,000 減 $150",
-        desc: "11/26–30 每晚 22:00 閃購（今晚 11/27 數碼場：AirPods Max $2,898、Garmin Vivoactive 6 $1,920、Marshall Stockwell II $1,299）；網店用滙豐卡輸 PPHSBC2026 滿 $2,000 再減 $150（連閃購適用）。",
+        title: "黑五 4 晚 22:00 閃購（今晚家電場）＋滙豐滿 $2,000 減 $150",
+        desc: "今晚（11/28）22:00 第 3 場家電閃購：Carrier 3/4 匹冷氣 $2,486、Toshiba 240L 雪櫃 $2,739、Samsung 50\" QLED $3,950；網店用滙豐卡輸 PPHSBC2026 滿 $2,000 再減 $150（連閃購適用）。",
         code: "PPHSBC2026",
         condition: "滙豐優惠碼限網店（名額 6,667 個）",
         expires: "11/30 止",
@@ -1090,13 +1077,52 @@
         id: "citysuper-winterfest-nov28",
         cat: "shopping",
         merchant: "city'super Winterfest",
-        title: "會員購物日（11/25–28）低至 8 折｜網店滿 $500 送 $50 券",
-        desc: "11/25–28 super e 會員享食品部低至 85 折、LOG-ON 低至 8 折、酒品低至 9 折；網店單筆滿 $500 送 $50 券（最多 5 張），門市滿 $2,000 送 $200。",
+        title: "今日（11/28）最後！會員購物日低至 8 折｜網店滿 $500 送 $50 券",
+        desc: "super e 會員享食品部低至 85 折、LOG-ON 低至 8 折、酒品低至 9 折；網店單筆滿 $500 送 $50 券（23:59 止，最多 5 張），門市滿 $2,000 送 $200。",
         code: "",
-        condition: "須登入 super e 會員（明日 11/28 最後）",
-        expires: "明日 11/28 止",
+        condition: "須登入 super e 會員（今日 11/28 最後）",
+        expires: "今日 11/28 止",
         urgent: true,
         url: "https://online.citysuper.com.hk/",
+        userState: "active"
+      },
+      {
+        id: "wellcome-weekly-dec03",
+        cat: "shopping",
+        merchant: "惠康超級市場",
+        title: "本週（11/27–12/3）灣仔碼頭煎餃 $10/包｜佳能/高樂氏滿 $138 送 $128 禮品",
+        desc: "門市限定：灣仔碼頭煎餃 $10/包（原 $27.9）、買佳能／高樂氏滿 $138 送 $128 禮品、家樂牌通心粉 2 袋送 $34 禮品；yuu 15,000 分換 $80 券至 12/10。",
+        code: "",
+        condition: "門市適用，貨品視乎分店供應",
+        expires: "12/3 止",
+        urgent: false,
+        url: "https://www.wellcome.com.hk/",
+        userState: "active"
+      },
+      {
+        id: "pns-nov-promo",
+        cat: "shopping",
+        merchant: "百佳 / PNS 網購",
+        title: "網購滿 $600 輸 NOVHD11 92 折（減 $100）｜門市 App $22 券",
+        desc: "11/30 止：PNS 網購滿 $600 用 NOVHD11 享 92 折、滿 $350 用 NOVFREE11 免運；落佳拎／快趣送滿 $250 減 $20；易賞錢 App 另有門市 $22 券。",
+        code: "NOVHD11",
+        condition: "各優惠碼限網購指定配送方式",
+        expires: "11/30 止",
+        urgent: false,
+        url: "https://www.pns.hk/",
+        userState: "active"
+      },
+      {
+        id: "aeon-weekend-nov29",
+        cat: "shopping",
+        merchant: "AEON 百貨",
+        title: "週末勁減（至 11/29）51 折起＋今日 14:00 車厘茄／16:00 鯖魚放題",
+        desc: "11/28–29 週末勁減低至 51 折；今日（11/28）14:00–15:00 日本車厘茄放題、16:00–17:00 無鹽去骨鯖魚及指定 SANRIO 商品放題。",
+        code: "",
+        condition: "放題須用店方器具袋盒（今日 11/28 限定）",
+        expires: "明日 11/29 止",
+        urgent: true,
+        url: "https://www.aeonstores.com.hk/",
         userState: "active"
       },
       {
@@ -1142,7 +1168,7 @@
         id: "wellcome-hangseng",
         cat: "shopping",
         merchant: "惠康 / Market Place × 恒生卡",
-        title: "網購滿 $1,000 賺 $100｜門市逢五至日（今日 11/27 起）滿 $500 賺 $40",
+        title: "網購滿 $1,000 賺 $100｜門市逢五至日（今日 11/28 適用）滿 $500 賺 $40",
         desc: "經 +FUN Centre 登記後，於惠康／Market Place／yuu 網購或週末門市簽賬賺高達 $620 +FUN Dollars。",
         code: "",
         condition: "須於恒生 App 預先登記，電子錢包除外",
