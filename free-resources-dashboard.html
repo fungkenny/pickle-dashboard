@@ -288,12 +288,12 @@
       },
       {
         id: "opencode-zen",
-        name: "OpenCode Zen (限時)",
+        name: "OpenCode Console / Zen (限時)",
         cat: "ai",
         priority: "P3",
         status: "gray",
-        url: "https://www.aipromonow.com/en/promos/opencode-zen-hy4-flash-free-nov2026",
-        quota: "11/22 實測 11 款免費：騰訊 hy4-flash-free（1M context）至 11/30，另有 mimo-v2.6-flash-free、longcat-2.5-free（beam-free 港澳不可用）",
+        url: "https://opencode.ai/docs/models",
+        quota: "11/26 改版 12 款免費模型（新增 Seaglass Alpha Free 1M、移除 Tidepool）：含 hy4-flash-free（零保留）、DeepSeek V4.1 Flash Free 等，僅限 OpenCode 內調用（外接回傳 403）",
         reset: "2026-11-30 止",
         card: false,
         used: "未領取",
@@ -397,11 +397,24 @@
         priority: "P11",
         status: "gray",
         url: "https://oneaiapikey.com/",
-        quota: "46 款 :free 模型共享每日 100 次請求＋500 萬 tokens（$0 餘額可用，免卡）",
+        quota: "47 款 :free 模型共享每日 100 次請求＋300 萬 tokens（$0 餘額可用，免卡）",
         reset: "每日 00:00 UTC 重置",
         card: false,
         used: "未領取",
         fallback: "多模型聚合備援（類似 OpenRouter 免卡 50 次上限之高配版）。"
+      },
+      {
+        id: "zai-glm-flash",
+        name: "Z.AI (智譜國際站)",
+        cat: "ai",
+        priority: "P12",
+        status: "gray",
+        url: "https://z.ai/",
+        quota: "永久 $0 免費 Flash 模型（glm-4.7-flash、glm-4.5-flash 及視覺模型 glm-4.6v-flash），免卡申請 API Key",
+        reset: "永久免費層",
+        card: false,
+        used: "未領取",
+        fallback: "中文與視覺理解免費備援。"
       },
       {
         id: "mistral-github-retired",
@@ -482,6 +495,19 @@
         card: false,
         used: "未領取",
         fallback: "輕量全端容器備援；留意 Fly.io 現已全面改為付費隨用隨付。"
+      },
+      {
+        id: "ade-cloud",
+        name: "ADE Cloud (Agent 雲機)",
+        cat: "vps",
+        priority: "P6",
+        status: "gray",
+        url: "https://aicrier.com/post/1ogry8ro0zsx0ormbg3j",
+        quota: "11/26 新推出免費無限量 Small 雲端實例，提供獨立 git worktree、終端與模擬器，自帶 API Key 長跑 Coding Agent",
+        reset: "免費推廣中",
+        card: false,
+        used: "未領取",
+        fallback: "背景長跑 AI Coding Agent 專用免費沙箱。"
       },
 
       // GPU Compute
@@ -642,6 +668,32 @@
         card: false,
         used: "未領取",
         fallback: "極速語音串流備援（每月可續用）。"
+      },
+      {
+        id: "murf-api-clone",
+        name: "Murf API Free (聲音複製)",
+        cat: "tts",
+        priority: "P8",
+        status: "gray",
+        url: "https://murf.ai/api",
+        quota: "11/19 起 API 免費層開放自助即時聲音複製（30 秒樣本＋同意錄音），可保留 1 個 Clone 音色用於 Falcon 2.1",
+        reset: "免費 API 層",
+        card: false,
+        used: "未領取",
+        fallback: "免升級 Enterprise 之 API 聲音複製備援。"
+      },
+      {
+        id: "freevoice-local",
+        name: "FreeVoice (本地開源 TTS)",
+        cat: "tts",
+        priority: "P9",
+        status: "gray",
+        url: "https://github.com/ViraBuilds/freevoice",
+        quota: "11/28 新開源本地工作室：Kokoro-82M 54 款音色＋Qwen3-TTS 0.6B（3–10 秒聲音複製），OpenAI /v1/audio/speech 相容、無上限",
+        reset: "永久開源免帳號",
+        card: false,
+        used: "未領取",
+        fallback: "本地離線／無限制商用替代 ElevenLabs 首選。"
       },
 
       // Web / DB
